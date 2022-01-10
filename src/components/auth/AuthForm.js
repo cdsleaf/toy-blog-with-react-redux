@@ -1,0 +1,85 @@
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import OpenColor from 'open-color';
+import Button from '../common/Button';
+
+const AuthFormBlock = styled.div`
+  h3 {
+    margin: 0;
+    color: ${OpenColor.gray[8]};
+    margin-bottom: 1rem;
+  }
+`;
+
+const StyledInput = styled.input`
+  font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid ${OpenColor.gray[5]};
+  padding-bottom: 0.5rem;
+  outline: none;
+  width: 100%;
+  &:focus {
+    color: ${OpenColor.teal[7]};
+    border-bottom: 1px solid ${OpenColor.gray[7]};
+  }
+  & + & {
+    margin-top: 1rem;
+  }
+`;
+
+const Footer = styled.div`
+  margin-top: 2rem;
+  text-align: right;
+  a {
+    color: ${OpenColor.gray[6]};
+    text-decoration: underline;
+    &:hover {
+      color: ${OpenColor.gray[9]};
+    }
+  }
+`;
+
+const ButtonWidthMarginTop = styled(Button)`
+  margin-top: 1rem;
+`;
+
+const textMap = {
+  login: 'Login',
+  register: 'Register',
+};
+
+const AuthForm = ({ type }) => {
+  const text = textMap[type];
+  return (
+    <AuthFormBlock>
+      <h3>{text}</h3>
+      <form>
+        <StyledInput autoComplete='username' name='username' placeholder='id' />
+        <StyledInput
+          autoComplete='new-password'
+          name='password'
+          placeholder='password'
+          type='password'
+        />
+        {type === 'register' && (
+          <StyledInput
+            autoComplete='new-password'
+            name='passwordConfirm'
+            placeholder='password confirm'
+            type='password'
+          />
+        )}
+        <ButtonWidthMarginTop cyan fullWidth>{text}</ButtonWidthMarginTop>
+      </form>
+      <Footer>
+        {type === 'login'
+          ? <Link to='/register'>Register</Link>
+          : <Link to='/login'>Login</Link>
+        }
+      </Footer>
+    </AuthFormBlock>
+  );
+};
+
+export default AuthForm;
