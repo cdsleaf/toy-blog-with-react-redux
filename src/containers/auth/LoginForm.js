@@ -1,13 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeField, initializeForm } from '../../modules/auth';
+import { changeField, initializeForm, login } from '../../modules/auth';
 import AuthForm from '../../components/auth/AuthForm';
+import { check } from '../../modules/user';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { form } = useSelector(({ auth }) => ({
-    form: auth.login
+  const { form, auth, authError, user } = useSelector(({ auth, user }) => ({
+    form: auth.login,
+    auth: auth.auth,
+    authError: auth.authError,
+    user: user.user
   }));
+  const navigate = useNavigate();
 
   const onChange = e => {
     const { value, name } = e.target;
@@ -22,12 +29,30 @@ const LoginForm = () => {
 
   const onSubmit = e => {
     e.preventDefault();
-
+    const { username, password } = form;
+    dispatch(login({ username, password }));
   }
 
   useEffect(() => {
     dispatch(initializeForm('login'));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (authError) {
+      console.log(authError);
+      setError('Login failed');
+      return;
+    }
+    if (auth) {
+      dispatch(check());
+    }
+  }, [auth, authError, dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  })
 
   return (
     <AuthForm
@@ -35,6 +60,7 @@ const LoginForm = () => {
       form={form}
       onChange={onChange}
       onSubmit={onSubmit}
+      error={error}
     />
   );
 };
